@@ -29,11 +29,16 @@ app.use(express.json())
   })
   
  
-  app.post('/users', async(req,res) => {
-    const users = req.body;
-    const result = await usersFile.insertOne(users)
-    res.send(result)
-  })
+  app.post('/users', async (req, res) => {
+    const user = req.body;
+    const query = { email: user.email }
+    const existingUser = await usersFile.findOne(query);
+    if (existingUser) {
+      return res.send({ message: 'user already exists', insertedId: null })
+    }
+    const result = await usersFile.insertOne(user);
+    res.send(result);
+  });
 
 
 
@@ -43,6 +48,11 @@ app.use(express.json())
     const result = await mealsFile.findOne(queary)
     res.send(result)
   })
+
+
+
+
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
