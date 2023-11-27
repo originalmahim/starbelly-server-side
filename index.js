@@ -75,14 +75,39 @@ app.patch('/users/:email/:id', async(req,res) => {
   res.send(result)
 })
 
+app.get('/us/:email/:id', async(req,res) => {
+  const id = req.params.id;
+  const email = req.params.email;
+  const queary = {_id: new ObjectId(id), email: email}
+  const result = await usersFile.findOne(queary)
+  res.send(result)
+})
+
+app.patch('/us/:email/:id', async (req, res) => {
+  const id = req.params.id;
+  const email = req.params.email;
+  const newSubscriptionStatus = req.body.subscriptionStatus;
+
+    const query = { _id: new ObjectId(id), email: email };
+
+    const updatedDoc = {
+      $set: {
+        subscriptionStatus: newSubscriptionStatus,
+      },
+    };
+    const result = await usersFile.updateOne(query, updatedDoc);
+    res.json(result);
+  
+});
 
 
-  app.get('/allmeals/:id', async(req,res) => {
-    const id = req.params.id
-    const queary = {_id: new ObjectId(id)}
-    const result = await mealsFile.findOne(queary)
-    res.send(result)
-  })
+
+app.get('/allmeals/:id', async(req,res) => {
+  const id = req.params.id
+  const queary = {_id: new ObjectId(id)}
+  const result = await mealsFile.findOne(queary)
+  res.send(result)
+})
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
