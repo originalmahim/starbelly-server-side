@@ -62,16 +62,27 @@ app.get('/users/:email/:id', async(req,res) => {
 })
 
 
+app.patch('/users/:email/:id', async(req,res) => {
+  const id = req.params.id;
+  const email = req.params.email;
+  const queary = {_id: new ObjectId(id), email: email}
+  const updatedDoc = {
+    $set: {
+      role: 'admin'
+    }
+  }
+  const result = await usersFile.updateOne(queary, updatedDoc)
+  res.send(result)
+})
+
+
+
   app.get('/allmeals/:id', async(req,res) => {
     const id = req.params.id
     const queary = {_id: new ObjectId(id)}
     const result = await mealsFile.findOne(queary)
     res.send(result)
   })
-
-
-
-
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
