@@ -20,7 +20,7 @@ app.use(express.json())
   });
 
   const mealsFile = client.db('mealsFile').collection('mealsCollection')
-  const usesFile = client.db('usesFile').collection('usersCollection')
+  const usersFile = client.db('usersFile').collection('usersCollection')
 
 
   app.get('/allmeals', async(req,res) => {
@@ -29,6 +29,12 @@ app.use(express.json())
   })
   
  
+  app.post('/users', async(req,res) => {
+    const users = req.body;
+    const result = await usersFile.insertOne(users)
+    res.send(result)
+  })
+
 
 
   app.get('/allmeals/:id', async(req,res) => {
