@@ -20,7 +20,7 @@ app.use(express.json())
   });
 
   const mealsFile = client.db('mealsFile').collection('mealsCollection')
-  
+  const usesFile = client.db('usesFile').collection('usersCollection')
 
 
   app.get('/allmeals', async(req,res) => {
