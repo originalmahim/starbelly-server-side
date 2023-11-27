@@ -31,10 +31,17 @@ app.use(express.json())
  
 
 
-  app.get('/', (req, res) => {
-    res.send('Hello World!')
+  app.get('/allmeals/:id', async(req,res) => {
+    const id = req.params.id
+    const queary = {_id: new ObjectId(id)}
+    const result = await mealsFile.findOne(queary)
+    res.send(result)
   })
 
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  })
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
