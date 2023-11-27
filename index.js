@@ -40,6 +40,19 @@ app.use(express.json())
     res.send(result);
   });
 
+  app.get('/users', async(req,res) => {
+    const users = await usersFile.find().toArray();
+    res.send(users)
+})
+
+
+app.get('/users/:email', async(req,res) => {
+  const email = req.params.email
+  const queary = { email: email}
+  const result = await usersFile.findOne(queary)
+  res.send(result)
+})
+
 
 
   app.get('/allmeals/:id', async(req,res) => {
