@@ -53,6 +53,13 @@ app.get('/users/:email', async(req,res) => {
   res.send(result)
 })
 
+app.get('/users/:email/:id', async(req,res) => {
+  const id = req.params.id;
+  const email = req.params.email;
+  const queary = {_id: new ObjectId(id), email: email}
+  const result = await usersFile.findOne(queary)
+  res.send(result)
+})
 
 
   app.get('/allmeals/:id', async(req,res) => {
@@ -61,7 +68,6 @@ app.get('/users/:email', async(req,res) => {
     const result = await mealsFile.findOne(queary)
     res.send(result)
   })
-
 
 
 
