@@ -19,7 +19,14 @@ app.use(express.json())
     }
   });
 
+  const mealsFile = client.db('mealsFile').collection('mealsCollection')
   
+
+
+  app.get('/allmeals', async(req,res) => {
+      const meals = await mealsFile.find().toArray();
+      res.send(meals)
+  })
   
  
 
