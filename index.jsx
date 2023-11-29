@@ -1,8 +1,9 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const app = express()
 const port = process.env.PORT || 5000 ;
-require('dotenv').config()
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 app.use(cors())
 app.use(express.json())
 
@@ -27,17 +28,16 @@ app.use(express.json())
       const meals = await mealsFile.find().toArray();
       res.send(meals)
   })
-
   app.get('/package', async(req,res) => {
-    const meals = await packageFile.find().toArray();
-    res.send(meals)
-})
-app.get('/package/:id', async(req,res) => {
-  const id = req.params.id;
-  const queary = {_id: new ObjectId(id)}
-    const meals = await packageFile.findOne(queary)
-    res.send(meals)
-})
+      const meals = await packageFile.find().toArray();
+      res.send(meals)
+  })
+  app.get('/package/:id', async(req,res) => {
+    const id = req.params.id;
+    const queary = {_id: new ObjectId(id)}
+      const meals = await packageFile.findOne(queary)
+      res.send(meals)
+  })
   
  
   app.post('/users', async (req, res) => {
@@ -50,9 +50,9 @@ app.get('/package/:id', async(req,res) => {
     const result = await usersFile.insertOne(user);
     res.send(result);
   });
-
-  app.post('/create-payment-intent', async (req,res) => {
-    const {price} = req.body;
+  
+  app.post('/create-payment-intent', async (req, res) => {
+    const { price } = req.body;
     const amount = parseInt(price * 100);
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount,
@@ -63,7 +63,9 @@ app.get('/package/:id', async(req,res) => {
     res.send({
       clientSecret: paymentIntent.client_secret
     })
-  })
+  });
+
+
 
   app.get('/users', async(req,res) => {
     const users = await usersFile.find().toArray();
@@ -86,6 +88,7 @@ app.get('/users/:email/:id', async(req,res) => {
   res.send(result)
 })
 
+
 app.patch('/users/:email/:id', async(req,res) => {
   const id = req.params.id;
   const email = req.params.email;
@@ -99,49 +102,55 @@ app.patch('/users/:email/:id', async(req,res) => {
   res.send(result)
 })
 
-app.patch('/users/:email/:id', async (req, res) => {
+app.get('/us/:email/:id', async(req,res) => {
+  const id = req.params.id;
+  const email = req.params.email;
+  const queary = {_id: new ObjectId(id), email: email}
+  const result = await usersFile.findOne(queary)
+  res.send(result)
+})
+
+app.patch('/users/:email', async (req, res) => {
+  const email = req.params.email;
+  const newSubscriptionStatus = req.body.subscriptionStatus;
+
+    const query = { email: email };
+
+    const updatedDoc = {
+      $set: {
+        subscriptionStatus: newSubscriptionStatus,
+      },
+    };
+    const result = await usersFile.updateOne(query, updatedDoc);
+    res.json(result);
+  
+});
+
+app.patch('/us/:email/:id', async (req, res) => {
   const id = req.params.id;
   const email = req.params.email;
   const newSubscriptionStatus = req.body.subscriptionStatus;
 
-  const query = { _id: new ObjectId(id), email: email };
-  const existingUser = await usersFile.findOne(query);
+    const query = { _id: new ObjectId(id), email: email };
 
-  // Check if the subscriptionStatus is already the same
-  if (existingUser.subscriptionStatus === newSubscriptionStatus) {
-    return res.status(200).json({
-      acknowledged: true,
-      matchedCount: 1,
-      modifiedCount: 0,
-      upsertedCount: 0,
-      upsertedId: null,
-      message: 'Subscription status is already the same.',
-    });
-  }
-
-  const updatedDoc = {
-    $set: {
-      subscriptionStatus: newSubscriptionStatus,
-    },
-  };
-
-  const result = await usersFile.updateOne(query, updatedDoc);
-  res.json(result);
+    const updatedDoc = {
+      $set: {
+        subscriptionStatus: newSubscriptionStatus,
+      },
+    };
+    const result = await usersFile.updateOne(query, updatedDoc);
+    res.json(result);
+  
 });
 
 
 
-
-  app.get('/allmeals/:id', async(req,res) => {
+app.get('/allmeals/:id', async(req,res) => {
   const id = req.params.id
   const queary = {_id: new ObjectId(id)}
   const result = await mealsFile.findOne(queary)
   res.send(result)
 })
-
-
-
-
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
