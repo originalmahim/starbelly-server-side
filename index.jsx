@@ -40,6 +40,12 @@ app.use(express.json())
   })
   
  
+  app.post('/allmeals', async (req, res) => {
+    const product = req.body;
+    const result = await mealsFile.insertOne(product);
+    res.send(result)
+  });
+
   app.post('/users', async (req, res) => {
     const user = req.body;
     const query = { email: user.email }
