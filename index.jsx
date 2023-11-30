@@ -36,6 +36,8 @@ app.use(express.json())
     const result = await mealsFile.insertOne(product);
     res.send(result)
   });
+
+  
   app.get('/upcoming', async(req,res) => {
       const meals = await upcomingFile.find().toArray();
       res.send(meals)
@@ -75,7 +77,7 @@ app.use(express.json())
     res.send(result)
   });
 
-  app.patch('/request/:id', async(req,res) => {
+  app.patch('/req/:id', async(req,res) => {
     const id = req.params.id;
     const queary = {_id: new ObjectId(id)}
     const updatedDoc = {
@@ -209,6 +211,13 @@ app.get('/allmeals/:id', async(req,res) => {
   const id = req.params.id
   const queary = {_id: new ObjectId(id)}
   const result = await mealsFile.findOne(queary)
+  res.send(result)
+})
+
+app.delete('/allmeals/:id', async(req,res) => {
+  const id = req.params.id;
+  const queary = {_id: new ObjectId(id)}
+  const result = await mealsFile.deleteOne(queary)
   res.send(result)
 })
 
