@@ -21,7 +21,9 @@ app.use(express.json())
   });
 
   const mealsFile = client.db('mealsFile').collection('mealsCollection')
+  const upcomingFile = client.db('upcomingFile').collection('upcomingCollection')
   const usersFile = client.db('usersFile').collection('usersCollection')
+  const requestFile = client.db('requestFile').collection('requestCollection')
   const packageFile = client.db('packageFile').collection('packageCollection')
 
   app.get('/allmeals', async(req,res) => {
@@ -29,17 +31,46 @@ app.use(express.json())
       res.send(meals)
   })
 
+  app.post('/allmeals', async (req, res) => {
+    const product = req.body;
+    const result = await mealsFile.insertOne(product);
+    res.send(result)
+  });
   app.get('/upcoming', async(req,res) => {
-    const meals = await upcomingFile.find().toArray();
-    res.send(meals)
-})
+      const meals = await upcomingFile.find().toArray();
+      res.send(meals)
+  })
 
-app.post('/upcoming', async (req, res) => {
-  const product = req.body;
-  const result = await upcomingFile.insertOne(product);
-  res.send(result)
-});
+  app.post('/upcoming', async (req, res) => {
+    const product = req.body;
+    const result = await upcomingFile.insertOne(product);
+    res.send(result)
+  });
 
+  app.get('/request', async(req,res) => {
+      const meals = await requestFile.find().toArray();
+      res.send(meals)
+  })
+
+  app.get('/request/:id', async(req,res) => {
+    const id = req.params.id
+    const queary = {_id: new ObjectId(id)}
+      const meals = await requestFile.findOne(queary)
+      res.send(meals)
+  })
+  app.get('/request/:email', async(req,res) => {
+    const email = req.params.email
+    const queary = { email: email}
+    const result = await requestFile.find(queary).toArray()
+    res.send(result)
+  })
+
+  app.post('/request', async (req, res) => {
+    const product = req.body;
+    const result = await requestFile.insertOne(product);
+    res.send(result)
+  });
+  
   app.get('/package', async(req,res) => {
       const meals = await packageFile.find().toArray();
       res.send(meals)
@@ -52,18 +83,6 @@ app.post('/upcoming', async (req, res) => {
   })
   
  
-  app.post('/allmeals', async (req, res) => {
-    const product = req.body;
-    const result = await mealsFile.insertOne(product);
-    res.send(result)
-  });
-
-  app.post('/upcomming', async (req, res) => {
-    const product = req.body;
-    const result = await mealsFile.insertOne(product);
-    res.send(result)
-  });
-
   app.post('/users', async (req, res) => {
     const user = req.body;
     const query = { email: user.email }
