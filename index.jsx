@@ -315,6 +315,37 @@ app.get('/allmeals/:id', async (req, res) => {
   }
 });
 
+app.patch('/allmeals/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+
+  try {
+    // Fetch the document to get the current value of Likes
+    const existingDoc = await mealsFile.findOne(query);
+
+    // Check if the document exists
+    if (!existingDoc) {
+      console.log(`Document not found for _id: ${id}`);
+      return res.status(404).send('Document not found');
+    }
+
+    // Log the existing Likes value
+    console.log(`Existing Likes value for _id ${id}: ${existingDoc.Likes}`);
+
+    // Convert the existing Likes value to a number
+    const currentLikes = parseInt(existingDoc.likes, 10) || 0;
+
+    // Log the calculated Likes value
+    console.log(`Calculated Likes value for _id ${id}: ${currentLikes}`);
+
+    // Increment the Likes field by 1
+    const updatedDoc = {
+      $set: {
+        likes: currentLikes + 1
+      }
+    };
+
+
 app.delete('/allmeals/:id', async (req, res) => {
   try {
     const id = req.params.id;
