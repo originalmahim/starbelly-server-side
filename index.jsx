@@ -28,6 +28,18 @@ app.use(express.json())
       const meals = await mealsFile.find().toArray();
       res.send(meals)
   })
+
+  app.get('/upcoming', async(req,res) => {
+    const meals = await upcomingFile.find().toArray();
+    res.send(meals)
+})
+
+app.post('/upcoming', async (req, res) => {
+  const product = req.body;
+  const result = await upcomingFile.insertOne(product);
+  res.send(result)
+});
+
   app.get('/package', async(req,res) => {
       const meals = await packageFile.find().toArray();
       res.send(meals)
@@ -41,6 +53,12 @@ app.use(express.json())
   
  
   app.post('/allmeals', async (req, res) => {
+    const product = req.body;
+    const result = await mealsFile.insertOne(product);
+    res.send(result)
+  });
+
+  app.post('/upcomming', async (req, res) => {
     const product = req.body;
     const result = await mealsFile.insertOne(product);
     res.send(result)
