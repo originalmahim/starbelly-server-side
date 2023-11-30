@@ -51,8 +51,12 @@ app.use(express.json())
       const meals = await requestFile.find().toArray();
       res.send(meals)
   })
+  app.get('/req', async(req,res) => {
+      const meals = await requestFile.find().toArray();
+      res.send(meals)
+  })
 
-  app.get('/request/:id', async(req,res) => {
+  app.get('/req/:id', async(req,res) => {
     const id = req.params.id
     const queary = {_id: new ObjectId(id)}
       const meals = await requestFile.findOne(queary)
@@ -70,6 +74,19 @@ app.use(express.json())
     const result = await requestFile.insertOne(product);
     res.send(result)
   });
+
+  app.patch('/request/:id', async(req,res) => {
+    const id = req.params.id;
+    const queary = {_id: new ObjectId(id)}
+    const updatedDoc = {
+      $set: {
+        status: 'Delivered'
+      }
+    }
+    const result = await requestFile.updateOne(queary, updatedDoc)
+    res.send(result)
+  })
+  
   
   app.get('/package', async(req,res) => {
       const meals = await packageFile.find().toArray();
